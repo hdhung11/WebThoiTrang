@@ -1,0 +1,18 @@
+﻿@model LTW.Models.KhuyenMai
+
+@{
+    ViewBag.Title = "Xác nhận xóa khuyến mãi";
+}
+
+<h2>Xác nhận xóa khuyến mãi</h2>
+
+<p>Bạn có chắc chắn muốn xóa khuyến mãi: <strong>@Model.TenKM</strong>?</p>
+
+@using (Html.BeginForm("Delete", "KhuyenMai", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.MaKM)
+
+    <input type="submit" value="Xóa" class="btn btn-danger" />
+    <a href="@Url.Action("Index", "KhuyenMai")" class="btn btn-default">Hủy</a>
+}
