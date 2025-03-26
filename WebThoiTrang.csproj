@@ -363,6 +363,7 @@
     <Compile Include="Areas\Admin\Model\PromotionDetailReport.cs" />
     <Compile Include="Areas\Admin\Model\SanPhamHetHangDetail.cs" />
     <Compile Include="Areas\Admin\Model\SanPhamHetHangViewModel.cs" />
+    <Compile Include="Areas\Admin\Model\SanPhamPartical.cs" />
     <Compile Include="Areas\Admin\Model\TheoDoiDonHangViewModel.cs" />
     <Compile Include="Areas\Admin\Model\ThongKeDonHangViewModel.cs" />
     <Compile Include="Areas\Admin\Model\ThongKeNgayViewModel.cs" />
@@ -380,6 +381,9 @@
     <Compile Include="Controllers\NhaCungCapController.cs" />
     <Compile Include="Controllers\PriceHelper.cs" />
     <Compile Include="Controllers\SanPhamController.cs" />
+    <Compile Include="Controllers\DatHang\CommandInvoker.cs" />
+    <Compile Include="Controllers\DatHang\DatHangCommand.cs" />
+    <Compile Include="Controllers\DatHang\ICommand.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -390,7 +394,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MyData.dbml</DependentUpon>
     </Compile>
-    <Compile Include="Models\SanPhamPartial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\VaiTroTuyChinh.cs" />
   </ItemGroup>

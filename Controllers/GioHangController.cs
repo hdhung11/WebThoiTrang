@@ -5,6 +5,9 @@ using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using LTW.Controllers.ThanhToan;
+
+
 
 namespace LTW.Controllers
 {
@@ -278,6 +281,147 @@ namespace LTW.Controllers
             }
             return RedirectToAction("GioHang");
         }
+        //[HttpGet]
+        //public ActionResult DatHang()
+        //{
+        //    if (Session["TaiKhoan"] == null)
+        //        return RedirectToAction("DangNhap", "NguoiDung");
+
+        //    var cart = LayGioHang();
+        //    if (!cart.Any())
+        //        return RedirectToAction("ListSanPham", "SanPham");
+
+        //    decimal tongTien = (decimal)TongTien();
+        //    var promotion = Session["AppliedPromotion"] as KhuyenMai;
+        //    decimal giamGia = 0;
+
+        //    if (promotion != null)
+        //    {
+        //        giamGia = tongTien * ((decimal)promotion.PhanTramGiam / 100);
+        //    }
+
+        //    ViewBag.TongTien = tongTien;
+        //    ViewBag.DiscountAmount = giamGia;
+        //    ViewBag.ShippingFee = 25000;
+        //    ViewBag.FinalTotal = TongTienSauKhuyenMai();
+        //    ViewBag.AppliedPromotion = promotion;
+        //    ViewBag.TrangThai = data.ThanhToans.ToList();
+
+        //    return View(cart);
+        //}
+
+        //[HttpPost]
+        //public ActionResult DatHang(FormCollection collection)
+        //{
+        //    try
+        //    {
+        //        int status = int.Parse(collection["TrangThai"]);
+        //        DonHang dh = new DonHang();
+        //        KhachHang kh = (KhachHang)Session["TaiKhoan"];
+        //        List<CartItem> gh = LayGioHang();
+
+        //        // Kiểm tra đầu vào
+        //        if (kh == null)
+        //        {
+        //            return RedirectToAction("DangNhap", "NguoiDung");
+        //        }
+
+        //        if (!gh.Any())
+        //        {
+        //            TempData["ErrorMessage"] = "Giỏ hàng trống!";
+        //            return RedirectToAction("GioHang");
+        //        }
+
+        //        var NgayGiaoHangDuKien = String.Format("{0:MM/dd/yyyy}", collection["NgayGiao"]);
+        //        if (DateTime.Parse(NgayGiaoHangDuKien) < DateTime.Now)
+        //        {
+        //            TempData["ErrorMessage"] = "Ngày giao hàng không hợp lệ!";
+        //            return RedirectToAction("DatHang");
+        //        }
+
+        //        // Tính toán các giá trị
+        //        decimal tongTienHang = (decimal)TongTien();
+        //        decimal chietKhau = 0; // Lấy từ form nếu có
+        //        decimal phiVanChuyen = 25000; // Phí cố định hoặc lấy từ form
+        //        decimal thueVAT = 10; // 10% VAT
+
+        //        decimal thanhTienTruocVAT = tongTienHang - chietKhau + phiVanChuyen;
+        //        decimal tienThueVAT = thanhTienTruocVAT * (thueVAT / 100);
+        //        decimal thanhTienSauVAT = thanhTienTruocVAT + tienThueVAT;
+
+        //        // Tạo đơn hàng với đầy đủ thông tin
+        //        dh.MaKH = kh.MaKH;
+        //        dh.NgayDatHang = DateTime.Now;
+        //        dh.NgayGiaoHangDuKien = DateTime.Parse(NgayGiaoHangDuKien);
+        //        dh.TrangThai = "chuagiao";
+        //        dh.TrangThaiThanhToan = (status == 1) ? "chuathanhtoan" : "dathanhtoan";
+        //        dh.MaTT = status;
+        //        dh.TongTienDonHang = tongTienHang;
+        //        dh.GhiChu = collection["GhiChu"]; // Nếu có trường ghi chú trong form
+        //        dh.ChietKhau = chietKhau;
+        //        dh.PhiVanChuyen = phiVanChuyen;
+        //        dh.DiaChiGiao = kh.DiaChi; // Hoặc lấy từ form nếu có địa chỉ giao hàng khác
+        //        dh.ThueVAT = thueVAT;
+        //        dh.TienThueVAT = tienThueVAT;
+        //        dh.ThanhTienTruocVAT = thanhTienTruocVAT;
+        //        dh.ThanhTienSauVAT = thanhTienSauVAT;
+        //        dh.NgayTao = DateTime.Now;
+
+        //        data.DonHangs.InsertOnSubmit(dh);
+        //        data.SubmitChanges();
+
+        //        // Phần code xử lý chi tiết đơn hàng giữ nguyên
+        //        foreach (var item in gh)
+        //        {
+        //            var sp = data.SanPhams.SingleOrDefault(n => n.MaSP == item.MaSP);
+        //            if (sp == null)
+        //            {
+        //                TempData["ErrorMessage"] = $"Không tìm thấy sản phẩm có mã {item.MaSP}";
+        //                return RedirectToAction("DatHang");
+        //            }
+
+        //            if (sp.SoLuongTon < item.isoluong)
+        //            {
+        //                TempData["ErrorMessage"] = $"Sản phẩm {sp.TenSP} không đủ số lượng trong kho";
+        //                return RedirectToAction("DatHang");
+        //            }
+
+        //            ChiTietDonHang ctdh = new ChiTietDonHang
+        //            {
+        //                MaDH = dh.MaDH,
+        //                MaSP = item.MaSP,
+        //                MaTT = status,
+        //                SoLuongMua = item.isoluong,
+        //                TongTien = (decimal)item.dThanhtien
+        //            };
+
+        //            data.ChiTietDonHangs.InsertOnSubmit(ctdh);
+        //            sp.SoLuongTon -= item.isoluong;
+        //        }
+
+        //        // Xử lý xóa giỏ hàng
+        //        var dbCart = data.GioHangs
+        //            .FirstOrDefault(g => g.MaKH == kh.MaKH && g.TrangThai == true);
+        //        if (dbCart != null)
+        //        {
+        //            var chiTietGioHang = data.ChiTietGioHangs
+        //                .Where(ct => ct.MaGioHang == dbCart.MaGioHang);
+        //            data.ChiTietGioHangs.DeleteAllOnSubmit(chiTietGioHang);
+        //            dbCart.TrangThai = false;
+        //        }
+
+        //        data.SubmitChanges();
+        //        Session["GioHang"] = null;
+
+        //        return RedirectToAction("XacNhanDonHang", "GioHang");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("Lỗi đặt hàng: " + ex.Message);
+        //        TempData["ErrorMessage"] = "Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại!";
+        //        return RedirectToAction("DatHang");
+        //    }
+        //}
 
         [HttpGet]
         public ActionResult DatHang()
@@ -308,115 +452,30 @@ namespace LTW.Controllers
             return View(cart);
         }
 
+        //Tạo command ,Dùng Invoker để thực thi command
         [HttpPost]
         public ActionResult DatHang(FormCollection collection)
         {
             try
             {
-                int status = int.Parse(collection["TrangThai"]);
-                DonHang dh = new DonHang();
-                KhachHang kh = (KhachHang)Session["TaiKhoan"];
-                List<CartItem> gh = LayGioHang();
-
-                // Kiểm tra đầu vào
-                if (kh == null)
-                {
+                if (Session["TaiKhoan"] == null)
                     return RedirectToAction("DangNhap", "NguoiDung");
-                }
 
-                if (!gh.Any())
-                {
-                    TempData["ErrorMessage"] = "Giỏ hàng trống!";
-                    return RedirectToAction("GioHang");
-                }
+                var khachHang = (KhachHang)Session["TaiKhoan"];
+                var gioHang = LayGioHang();
 
-                var NgayGiaoHangDuKien = String.Format("{0:MM/dd/yyyy}", collection["NgayGiao"]);
-                if (DateTime.Parse(NgayGiaoHangDuKien) < DateTime.Now)
-                {
-                    TempData["ErrorMessage"] = "Ngày giao hàng không hợp lệ!";
-                    return RedirectToAction("DatHang");
-                }
+                var command = new DatHangCommand(data, khachHang, gioHang, collection);
+                var invoker = new CommandInvoker();
+                invoker.SetCommand(command);
+                invoker.ExecuteCommand();
 
-                // Tính toán các giá trị
-                decimal tongTienHang = (decimal)TongTien();
-                decimal chietKhau = 0; // Lấy từ form nếu có
-                decimal phiVanChuyen = 25000; // Phí cố định hoặc lấy từ form
-                decimal thueVAT = 10; // 10% VAT
-
-                decimal thanhTienTruocVAT = tongTienHang - chietKhau + phiVanChuyen;
-                decimal tienThueVAT = thanhTienTruocVAT * (thueVAT / 100);
-                decimal thanhTienSauVAT = thanhTienTruocVAT + tienThueVAT;
-
-                // Tạo đơn hàng với đầy đủ thông tin
-                dh.MaKH = kh.MaKH;
-                dh.NgayDatHang = DateTime.Now;
-                dh.NgayGiaoHangDuKien = DateTime.Parse(NgayGiaoHangDuKien);
-                dh.TrangThai = "chuagiao";
-                dh.TrangThaiThanhToan = (status == 1) ? "chuathanhtoan" : "dathanhtoan";
-                dh.MaTT = status;
-                dh.TongTienDonHang = tongTienHang;
-                dh.GhiChu = collection["GhiChu"]; // Nếu có trường ghi chú trong form
-                dh.ChietKhau = chietKhau;
-                dh.PhiVanChuyen = phiVanChuyen;
-                dh.DiaChiGiao = kh.DiaChi; // Hoặc lấy từ form nếu có địa chỉ giao hàng khác
-                dh.ThueVAT = thueVAT;
-                dh.TienThueVAT = tienThueVAT;
-                dh.ThanhTienTruocVAT = thanhTienTruocVAT;
-                dh.ThanhTienSauVAT = thanhTienSauVAT;
-                dh.NgayTao = DateTime.Now;
-
-                data.DonHangs.InsertOnSubmit(dh);
-                data.SubmitChanges();
-
-                // Phần code xử lý chi tiết đơn hàng giữ nguyên
-                foreach (var item in gh)
-                {
-                    var sp = data.SanPhams.SingleOrDefault(n => n.MaSP == item.MaSP);
-                    if (sp == null)
-                    {
-                        TempData["ErrorMessage"] = $"Không tìm thấy sản phẩm có mã {item.MaSP}";
-                        return RedirectToAction("DatHang");
-                    }
-
-                    if (sp.SoLuongTon < item.isoluong)
-                    {
-                        TempData["ErrorMessage"] = $"Sản phẩm {sp.TenSP} không đủ số lượng trong kho";
-                        return RedirectToAction("DatHang");
-                    }
-
-                    ChiTietDonHang ctdh = new ChiTietDonHang
-                    {
-                        MaDH = dh.MaDH,
-                        MaSP = item.MaSP,
-                        MaTT = status,
-                        SoLuongMua = item.isoluong,
-                        TongTien = (decimal)item.dThanhtien
-                    };
-
-                    data.ChiTietDonHangs.InsertOnSubmit(ctdh);
-                    sp.SoLuongTon -= item.isoluong;
-                }
-
-                // Xử lý xóa giỏ hàng
-                var dbCart = data.GioHangs
-                    .FirstOrDefault(g => g.MaKH == kh.MaKH && g.TrangThai == true);
-                if (dbCart != null)
-                {
-                    var chiTietGioHang = data.ChiTietGioHangs
-                        .Where(ct => ct.MaGioHang == dbCart.MaGioHang);
-                    data.ChiTietGioHangs.DeleteAllOnSubmit(chiTietGioHang);
-                    dbCart.TrangThai = false;
-                }
-
-                data.SubmitChanges();
                 Session["GioHang"] = null;
-
                 return RedirectToAction("XacNhanDonHang", "GioHang");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Lỗi đặt hàng: " + ex.Message);
-                TempData["ErrorMessage"] = "Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại!";
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("DatHang");
             }
         }

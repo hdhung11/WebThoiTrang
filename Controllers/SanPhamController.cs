@@ -265,36 +265,36 @@ namespace LTW.Controllers
                 .FirstOrDefault();
         }
 
-        //prototype clone sản phẩm  
-        public ActionResult CloneSanPham(int id) // Action này dùng để clone một sản phẩm dựa vào mã sản phẩm (id)
-        {
-            // Tìm sản phẩm gốc trong database theo id
-            var originalSP = data.SanPhams.FirstOrDefault(sp => sp.MaSP == id);
+        ////prototype clone sản phẩm  
+        //public ActionResult CloneSanPham(int id) // Action này dùng để clone một sản phẩm dựa vào mã sản phẩm (id)
+        //{
+        //    // Tìm sản phẩm gốc trong database theo id
+        //    var originalSP = data.SanPhams.FirstOrDefault(sp => sp.MaSP == id);
 
-            // Nếu không tìm thấy sản phẩm thì trả về lỗi 404
-            if (originalSP == null)
-            {
-                return HttpNotFound(); // Trả về lỗi nếu không tìm thấy sản phẩm cần clone
-            }
+        //    // Nếu không tìm thấy sản phẩm thì trả về lỗi 404
+        //    if (originalSP == null)
+        //    {
+        //        return HttpNotFound(); // Trả về lỗi nếu không tìm thấy sản phẩm cần clone
+        //    }
 
-            // Thực hiện clone sản phẩm gốc bằng phương thức Clone() (áp dụng Prototype Pattern)
-            var clonedSP = originalSP.Clone() as SanPham;
+        //    // Thực hiện clone sản phẩm gốc bằng phương thức Clone() (áp dụng Prototype Pattern)
+        //    var clonedSP = originalSP.Clone() as SanPham;
 
-            // Tùy chỉnh tên sản phẩm clone để dễ phân biệt với bản gốc
-            clonedSP.TenSP += " (Copy)";
+        //    // Tùy chỉnh tên sản phẩm clone để dễ phân biệt với bản gốc
+        //    clonedSP.TenSP += " (Copy)";
 
-            // Thêm bản clone vào CSDL
-            data.SanPhams.InsertOnSubmit(clonedSP);
+        //    // Thêm bản clone vào CSDL
+        //    data.SanPhams.InsertOnSubmit(clonedSP);
 
-            // Lưu thay đổi vào database
-            data.SubmitChanges();
+        //    // Lưu thay đổi vào database
+        //    data.SubmitChanges();
 
-            // Gửi thông báo thành công qua TempData để hiển thị ở View
-            TempData["CloneSuccess"] = "Đã clone sản phẩm thành công!";
+        //    // Gửi thông báo thành công qua TempData để hiển thị ở View
+        //    TempData["CloneSuccess"] = "Đã clone sản phẩm thành công!";
 
-            // Chuyển hướng người dùng về trang danh sách sản phẩm sau khi clone xong
-            return RedirectToAction("ListSanPham");
-        }
+        //    // Chuyển hướng người dùng về trang danh sách sản phẩm sau khi clone xong
+        //    return RedirectToAction("ListSanPham");
+        //}
 
     }
 
