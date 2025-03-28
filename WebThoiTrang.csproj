@@ -345,6 +345,7 @@
     <Compile Include="Areas\Admin\Controllers\LoaisController.cs" />
     <Compile Include="Areas\Admin\Controllers\NhaCungCapsController.cs" />
     <Compile Include="Areas\Admin\Controllers\PhieuNhapController.cs" />
+    <Compile Include="Areas\Admin\Controllers\SanPhamBuilder\SanPhamBuilder.cs" />
     <Compile Include="Areas\Admin\Controllers\SanPhamsController.cs" />
     <Compile Include="Areas\Admin\Model\ChiTietPhieuNhapViewModel.cs" />
     <Compile Include="Areas\Admin\Model\CongNoKhachHangViewModel.cs" />

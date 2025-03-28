@@ -1,4 +1,5 @@
-﻿using LTW.Models;
+﻿using LTW.Builders;
+using LTW.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,13 +50,54 @@ namespace LTW.Areas.Admin.Controllers
             return View();
         }
 
+        //[HttpPost]
+        //public ActionResult Create(FormCollection collection, SanPham sp, HttpPostedFileBase Hinh)
+        //{
+        //    var E_TenSP = collection["TenSP"];
+        //    var E_Hinh = ProcessUpload(Hinh);
+        //    var E_GiaVon = Convert.ToInt32(collection["GiaVon"]);
+        //    var E_GiaSP = Convert.ToInt32(collection["GiaSP"]);
+        //    var E_SoLuongTon = Convert.ToInt32(collection["SoLuongTon"]);
+        //    var E_MoTa = collection["MoTa"];
+        //    var E_MaLoai = Convert.ToInt32(collection["MaLoai"]);
+        //    var E_NCC = Convert.ToInt32(collection["MaNCC"]);
+
+        //    if (string.IsNullOrEmpty(E_TenSP))
+        //    {
+        //        ViewData["Error"] = "Don't empty!";
+        //    }
+        //    else
+        //    {
+        //        sp.TenSP = E_TenSP.ToString();
+        //        sp.Hinh = E_Hinh.ToString();
+        //        sp.GiaVon = E_GiaVon;
+        //        sp.GiaSP = E_GiaSP;
+        //        sp.SoLuongTon = E_SoLuongTon;
+        //        sp.MoTa = E_MoTa.ToString();
+        //        sp.MaLoai = E_MaLoai;
+        //        sp.MaNCC = E_NCC;
+
+        //        // Xử lý upload hình
+        //        if (Hinh != null)
+        //        {
+        //            string path = Path.Combine(Server.MapPath("~/Content/images"), Path.GetFileName(Hinh.FileName));
+        //            Hinh.SaveAs(path);
+        //            sp.Hinh = "/Content/images/" + Hinh.FileName;
+        //        }
+
+        //        data.SanPhams.InsertOnSubmit(sp);
+        //        data.SubmitChanges();
+        //        return RedirectToAction("ListSanPham");
+        //    }
+        //    return this.Create();
+        //}
         [HttpPost]
-        public ActionResult Create(FormCollection collection, SanPham sp, HttpPostedFileBase Hinh)
+        public ActionResult Create(FormCollection collection)
         {
             var E_TenSP = collection["TenSP"];
-            var E_Hinh = ProcessUpload(Hinh);
-            var E_GiaVon = Convert.ToInt32(collection["GiaVon"]);
+            var E_Hinh = "/Content/images/" + collection["Hinh"];
             var E_GiaSP = Convert.ToInt32(collection["GiaSP"]);
+            var E_GiaVon= Convert.ToInt32(collection["GiaVon"]);
             var E_SoLuongTon = Convert.ToInt32(collection["SoLuongTon"]);
             var E_MoTa = collection["MoTa"];
             var E_MaLoai = Convert.ToInt32(collection["MaLoai"]);
@@ -67,28 +109,22 @@ namespace LTW.Areas.Admin.Controllers
             }
             else
             {
-                sp.TenSP = E_TenSP.ToString();
-                sp.Hinh = E_Hinh.ToString();
-                sp.GiaVon = E_GiaVon;
-                sp.GiaSP = E_GiaSP;
-                sp.SoLuongTon = E_SoLuongTon;
-                sp.MoTa = E_MoTa.ToString();
-                sp.MaLoai = E_MaLoai;
-                sp.MaNCC = E_NCC;
-
-                // Xử lý upload hình
-                if (Hinh != null)
-                {
-                    string path = Path.Combine(Server.MapPath("~/Content/images"), Path.GetFileName(Hinh.FileName));
-                    Hinh.SaveAs(path);
-                    sp.Hinh = "/Content/images/" + Hinh.FileName;
-                }
+                SanPham sp = new SanPhamBuilder()
+                    .SetTenSP(E_TenSP)
+                    .SetHinh(E_Hinh)
+                    .SetGiaSP(E_GiaSP)
+                    .SetSoLuongTon(E_SoLuongTon)
+                    .SetGiaVon(E_GiaVon)
+                    .SetMoTa(E_MoTa)
+                    .SetMaLoai(E_MaLoai)
+                    .SetNCC(E_NCC)
+                    .Build();
 
                 data.SanPhams.InsertOnSubmit(sp);
                 data.SubmitChanges();
                 return RedirectToAction("ListSanPham");
             }
-            return this.Create();
+            return View();  
         }
 
         public ActionResult Detail(int id)
@@ -160,6 +196,8 @@ namespace LTW.Areas.Admin.Controllers
             data.SubmitChanges();
             return RedirectToAction("ListSanPham");
         }
+
+
         //prototype clone sản phẩm  
         public ActionResult CloneSanPham(int id) // Action này dùng để clone một sản phẩm dựa vào mã sản phẩm (id)
         {
@@ -180,7 +218,7 @@ namespace LTW.Areas.Admin.Controllers
 
             // Thêm bản clone vào CSDL
             data.SanPhams.InsertOnSubmit(clonedSP);
-
+                
             // Lưu thay đổi vào database
             data.SubmitChanges();
 

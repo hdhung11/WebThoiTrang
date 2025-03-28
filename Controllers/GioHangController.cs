@@ -16,54 +16,121 @@ namespace LTW.Controllers
         // GET: GioHang
         MyDataDataContext data = new MyDataDataContext();
 
+        //public List<CartItem> LayGioHang()
+        //{
+        //    // Nếu user đã đăng nhập
+        //    var user = Session["TaiKhoan"] as KhachHang;
+        //    if (user != null)
+        //    {
+        //        // Lấy từ database
+        //        var dbCart = data.GioHangs
+        //            .Where(g => g.MaKH == user.MaKH && g.TrangThai == true)
+        //            .FirstOrDefault();
+
+        //        if (dbCart != null)
+        //        {
+        //            return data.ChiTietGioHangs
+        //                .Where(ct => ct.MaGioHang == dbCart.MaGioHang)
+        //                .Select(ct => new CartItem(ct))
+        //                .ToList();
+        //        }
+        //    }
+
+        //    // Nếu chưa đăng nhập hoặc không có giỏ hàng trong DB, lấy từ Session
+        //    List<CartItem> lstGioHang = Session["GioHang"] as List<CartItem>;
+        //    if (lstGioHang == null)
+        //    {
+        //        lstGioHang = new List<CartItem>();
+        //        Session["GioHang"] = lstGioHang;
+        //    }
+        //    return lstGioHang;
+        //}
+
+        //// Thêm vào giỏ hàng
+        //[HttpPost]
+        //public ActionResult ThemGioHang(int id, int soLuong = 1)
+        //{
+        //    var user = Session["TaiKhoan"] as KhachHang;
+        //    if (user != null)
+        //    {
+        //        // Thêm vào database
+        //        ThemGioHangDatabase(user.MaKH, id, soLuong);
+        //    }
+
+        //    // Luôn cập nhật session để hiển thị ngay
+        //    List<CartItem> lstGioHang = LayGioHang();
+        //    CartItem sp = lstGioHang.Find(n => n.MaSP == id);
+
+        //    if (sp == null)
+        //    {
+        //        sp = new CartItem(id);
+        //        sp.isoluong = soLuong;
+        //        lstGioHang.Add(sp);
+        //    }
+        //    else
+        //    {
+        //        sp.isoluong += soLuong;
+        //    }
+
+        //    return Json(new
+        //    {
+        //        success = true,
+        //        message = "Thêm vào giỏ hàng thành công",
+        //        totalItems = lstGioHang.Sum(x => x.isoluong)
+        //    });
+        //}
         public List<CartItem> LayGioHang()
         {
-            // Nếu user đã đăng nhập
+            List<CartItem> lstGioHang = new List<CartItem>();
+
+            // Kiểm tra nếu user đã đăng nhập
             var user = Session["TaiKhoan"] as KhachHang;
             if (user != null)
             {
-                // Lấy từ database
+                // Lấy giỏ hàng từ database
                 var dbCart = data.GioHangs
-                    .Where(g => g.MaKH == user.MaKH && g.TrangThai == true)
-                    .FirstOrDefault();
+                    .FirstOrDefault(g => g.MaKH == user.MaKH && g.TrangThai == true);
 
                 if (dbCart != null)
                 {
-                    return data.ChiTietGioHangs
+                    var chiTietGioHangs = data.ChiTietGioHangs
                         .Where(ct => ct.MaGioHang == dbCart.MaGioHang)
-                        .Select(ct => new CartItem(ct))
+                        .ToList(); // Lấy dữ liệu trước
+
+                    // Sau đó mới chuyển đổi sang CartItem bằng C#
+                    lstGioHang = chiTietGioHangs
+                        .Select(ct => CartItem.CreateCartItem(ct, data))
+                        .Where(cartItem => cartItem != null) // Lọc mục null (nếu có)
                         .ToList();
                 }
             }
 
             // Nếu chưa đăng nhập hoặc không có giỏ hàng trong DB, lấy từ Session
-            List<CartItem> lstGioHang = Session["GioHang"] as List<CartItem>;
-            if (lstGioHang == null)
+            if (!lstGioHang.Any())
             {
-                lstGioHang = new List<CartItem>();
-                Session["GioHang"] = lstGioHang;
+                lstGioHang = Session["GioHang"] as List<CartItem> ?? new List<CartItem>();
+                Session["GioHang"] = lstGioHang; // Đảm bảo Session luôn có giỏ hàng
             }
+
             return lstGioHang;
         }
 
-        // Thêm vào giỏ hàng
+
         [HttpPost]
         public ActionResult ThemGioHang(int id, int soLuong = 1)
         {
             var user = Session["TaiKhoan"] as KhachHang;
-            if (user != null)
-            {
-                // Thêm vào database
-                ThemGioHangDatabase(user.MaKH, id, soLuong);
-            }
-
-            // Luôn cập nhật session để hiển thị ngay
             List<CartItem> lstGioHang = LayGioHang();
-            CartItem sp = lstGioHang.Find(n => n.MaSP == id);
 
+            // Kiểm tra sản phẩm có tồn tại hay không
+            var sp = lstGioHang.FirstOrDefault(n => n.MaSP == id);
             if (sp == null)
             {
-                sp = new CartItem(id);
+                sp = CartItem.CreateCartItem(id, data);
+                if (sp == null)
+                {
+                    return Json(new { success = false, message = "Sản phẩm không tồn tại." });
+                }
                 sp.isoluong = soLuong;
                 lstGioHang.Add(sp);
             }
@@ -71,6 +138,21 @@ namespace LTW.Controllers
             {
                 sp.isoluong += soLuong;
             }
+
+            // Kiểm tra số lượng tồn kho trước khi thêm
+            if (!sp.KiemTraSoLuong(data, soLuong))
+            {
+                return Json(new { success = false, message = "Số lượng sản phẩm không đủ trong kho." });
+            }
+
+            // Nếu user đã đăng nhập -> cập nhật database
+            if (user != null)
+            {
+                ThemGioHangDatabase(user.MaKH, id, soLuong);
+            }
+
+            // Cập nhật session
+            Session["GioHang"] = lstGioHang;
 
             return Json(new
             {
@@ -304,7 +386,7 @@ namespace LTW.Controllers
         //    ViewBag.DiscountAmount = giamGia;
         //    ViewBag.ShippingFee = 25000;
         //    ViewBag.FinalTotal = TongTienSauKhuyenMai();
-        //    ViewBag.AppliedPromotion = promotion;
+        //    ViewBag.AppliedPromotion = promotion;     
         //    ViewBag.TrangThai = data.ThanhToans.ToList();
 
         //    return View(cart);

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace LTW.Controllers.ThanhToan
 {
-    public class CommandInvoker
+    public class CommandInvoker //controller gọi involker để thực thi command
     {
         private ICommand _command;
 
@@ -16,7 +16,7 @@ namespace LTW.Controllers.ThanhToan
 
         public void ExecuteCommand()
         {
-            _command?.Execute();
+            _command?.Execute(); //Kiểm tra _command có giá trị không (?.) rồi gọi Execute()
         }
     }
 }

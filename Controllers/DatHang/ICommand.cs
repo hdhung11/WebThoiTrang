@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace LTW.Controllers.ThanhToan
 {
-    public interface ICommand
+    public interface ICommand //thao tác đặt hàng và thanh toán sẽ là 1 command riêng   
     {
-        void Execute();
+        void Execute(); //đại diện cho một hành động cụ thể mà lệnh (command) thực hiện.
     }
-
 }
+
+

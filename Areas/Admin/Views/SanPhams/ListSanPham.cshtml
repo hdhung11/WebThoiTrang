@@ -61,10 +61,19 @@
                                     <a href="@Url.Action("Delete", new { id = item.MaSP })" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                                    <a href="@Url.Action("CloneSanPham", "SanPhams", new { id = item.MaSP })" class="btn btn-sm btn-outline-primary mt-2">
+                                    <a href="@Url.Action("CloneSanPham", "SanPhams", new { id = item.MaSP })"
+                                       class="btn btn-sm btn-outline-primary mt-2"
+                                       onclick="return confirmClone(@item.MaSP);">
                                         Clone sản phẩm
                                     </a>
-                                </div>
+
+                                    <script>
+                                        function confirmClone(id) {
+                                            return confirm("Bạn có chắc chắn muốn clone sản phẩm có ID: " + id + " không?");
+                                        }
+                                    </script>
+
+                                </div>      
                             </td>
                         </tr>
                     }
@@ -72,7 +81,7 @@
 
             </table>
         </div>
-    </div>
+    </div>          
 </div>
 
 <style>
